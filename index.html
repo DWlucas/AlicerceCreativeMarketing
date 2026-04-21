@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alicerce Creative Marketing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #080808;
+  --dark: #111111;
+  --gray: #e8e6e0;
+  --red: #9b1515;
+  --red-bright: #c0392b;
+  --white: #f0ede8;
+  --muted: rgba(240,237,232,0.35);
+  --border: rgba(240,237,232,0.08);
+  --code: rgba(200,180,160,0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ─── CURSOR ─────────────────────────────────── */
+.cur { position:fixed; width:8px; height:8px; background:var(--red-bright); border-radius:50%; pointer-events:none; z-index:9999; transition:transform .12s; }
+.cur-ring { position:fixed; width:36px; height:36px; border:1px solid rgba(192,57,43,.5); border-radius:50%; pointer-events:none; z-index:9998; transition:left .14s ease,top .14s ease,transform .2s; }
+.cur-ring.hov { transform:scale(2.2); border-color:var(--red-bright); background:rgba(192,57,43,.06); }
+
+/* ─── LOADING SCREEN ─────────────────────────── */
+#loader {
+  position:fixed; inset:0; z-index:8000;
+  background:var(--black);
+  display:flex; align-items:center; justify-content:center;
+  flex-direction:column; gap:20px;
+  transition:opacity .8s ease, visibility .8s;
+}
+#loader.gone { opacity:0; visibility:hidden; }
+.loader-word {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(48px,10vw,120px);
+  letter-spacing:.06em;
+  color:var(--white);
+  overflow:hidden;
+}
+.loader-word span { display:inline-block; transform:translateY(110%); animation:slideUp .7s cubic-bezier(.77,0,.18,1) forwards; }
+.loader-word span:nth-child(2) { color:var(--red-bright); animation-delay:.15s; }
+.loader-bar { width:200px; height:1px; background:var(--border); position:relative; overflow:hidden; }
+.loader-bar::after { content:''; position:absolute; left:-100%; top:0; bottom:0; width:100%; background:var(--red-bright); animation:loadBar 1.2s ease forwards .4s; }
+@keyframes loadBar { to { left:0; } }
+@keyframes slideUp { to { transform:translateY(0); } }
+
+/* ─── NAV ────────────────────────────────────── */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:500;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:22px 52px;
+  mix-blend-mode: difference;
+}
+.nav-logo {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:15px; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--white); text-decoration:none;
+  display:flex; align-items:center; gap:8px;
+}
+.nav-logo .plus { color:var(--red-bright); font-size:20px; line-height:1; }
+.nav-links { display:flex; gap:36px; }
+.nav-links a {
+  font-family:'DM Mono',monospace; font-size:11px;
+  letter-spacing:.12em; text-transform:uppercase;
+  color:rgba(240,237,232,.55); text-decoration:none;
+  transition:color .2s;
+}
+.nav-links a:hover { color:var(--white); }
+.nav-cta {
+  font-family:'DM Mono',monospace; font-size:11px;
+  letter-spacing:.14em; text-transform:uppercase;
+  border:1px solid rgba(240,237,232,.25);
+  color:var(--white); padding:9px 22px;
+  text-decoration:none; transition:all .2s;
+  background:transparent;
+}
+.nav-cta:hover { background:var(--red-bright); border-color:var(--red-bright); }
+
+/* ─── HERO ───────────────────────────────────── */
+.hero {
+  position:relative; min-height:100vh;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  overflow:hidden;
+  background:var(--black);
+  padding-bottom:60px;
+}
+.hero-bg {
+  position:absolute; inset:0;
+  background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(120,15,15,.28) 0%, transparent 65%),
+              radial-gradient(ellipse 40% 40% at 50% 50%, rgba(140,20,20,.12) 0%, transparent 70%);
+}
+.hero-spotlight {
+  position:absolute; left:50%; top:0;
+  width:2px; height:100%;
+  background:linear-gradient(to bottom, transparent 0%, rgba(255,255,255,.03) 40%, transparent 100%);
+  transform:translateX(-50%) skewX(-8deg);
+}
+
+/* Code rain background */
+.code-bg {
+  position:absolute; inset:0; pointer-events:none; overflow:hidden;
+  font-family:'DM Mono',monospace; font-size:11px; line-height:1.6;
+  color:rgba(155,21,21,.18);
+  padding:80px 40px;
+  display:grid; grid-template-columns:1fr 1fr; gap:0 80px;
+}
+.code-col { opacity:.6; white-space:pre; }
+
+.hero-content {
+  position:relative; z-index:3;
+  padding:0 52px;
+}
+.hero-eyebrow {
+  font-family:'DM Mono',monospace; font-size:11px;
+  letter-spacing:.22em; text-transform:uppercase;
+  color:var(--red-bright); margin-bottom:12px;
+  display:flex; align-items:center; gap:14px;
+  opacity:0; animation:fadeIn .6s ease .6s forwards;
+}
+.hero-eyebrow::before { content:''; width:28px; height:1px; background:var(--red-bright); }
+.hero-h1 {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(72px,12vw,180px);
+  line-height:.88;
+  letter-spacing:.01em;
+  text-transform:uppercase;
+  color:var(--white);
+  overflow:hidden;
+}
+.hero-h1 .line { display:block; transform:translateY(110%); }
+.hero-h1 .line.r { color:var(--red-bright); }
+.hero-h1 .line:nth-child(1) { animation:slideUp .9s cubic-bezier(.77,0,.18,1) .3s forwards; }
+.hero-h1 .line:nth-child(2) { animation:slideUp .9s cubic-bezier(.77,0,.18,1) .45s forwards; }
+.hero-h1 .line:nth-child(3) { animation:slideUp .9s cubic-bezier(.77,0,.18,1) .6s forwards; }
+
+.hero-bottom {
+  display:flex; justify-content:space-between; align-items:flex-end;
+  margin-top:40px;
+  opacity:0; animation:fadeIn .7s ease 1.1s forwards;
+}
+.hero-desc { font-size:14px; line-height:1.7; color:var(--muted); max-width:380px; }
+.hero-cta-wrap { display:flex; align-items:center; gap:20px; }
+.btn-red {
+  background:var(--red-bright); color:var(--white);
+  padding:14px 32px; font-family:'DM Mono',monospace;
+  font-size:11px; letter-spacing:.15em; text-transform:uppercase;
+  text-decoration:none; border:none; cursor:pointer;
+  display:inline-flex; align-items:center; gap:10px;
+  transition:background .2s, transform .2s;
+}
+.btn-red:hover { background:#a93226; transform:translateY(-2px); }
+.hero-scroll {
+  font-family:'DM Mono',monospace; font-size:10px;
+  letter-spacing:.18em; text-transform:uppercase;
+  color:var(--muted); display:flex; align-items:center; gap:10px;
+  writing-mode:vertical-rl; transform:rotate(180deg);
+}
+
+/* Plus symbol hero decoration */
+.hero-plus {
+  position:absolute; right:52px; top:50%; transform:translateY(-50%);
+  display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr;
+  gap:6px; z-index:2;
+  opacity:0; animation:fadeIn .8s ease .8s forwards;
+}
+.hp-cell {
+  width:clamp(40px,5vw,72px); height:clamp(40px,5vw,72px);
+  background:var(--red-bright); border-radius:6px;
+  animation:hpPulse 3s ease-in-out infinite;
+}
+.hp-cell:nth-child(1) { animation-delay:0s; }
+.hp-cell:nth-child(2) { animation-delay:.3s; }
+.hp-cell:nth-child(3) { animation-delay:.6s; }
+.hp-cell:nth-child(4) { animation-delay:.9s; }
+@keyframes hpPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.92)} }
+
+/* ─── TICKER ────────────────────────────────── */
+.ticker {
+  background:var(--red-bright);
+  border-top:1px solid rgba(0,0,0,.3);
+  border-bottom:1px solid rgba(0,0,0,.3);
+  padding:13px 0; overflow:hidden;
+}
+.ticker-track { display:flex; animation:ticker 28s linear infinite; white-space:nowrap; }
+.ticker-item {
+  font-family:'Bebas Neue',sans-serif; font-size:15px;
+  letter-spacing:.2em; color:var(--white);
+  padding:0 36px; display:flex; align-items:center; gap:24px;
+}
+.ticker-item::after { content:'+'; font-size:14px; opacity:.6; }
+@keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+/* ─── SECTION SHARED ────────────────────────── */
+.sec { padding:120px 52px; }
+.sec-label {
+  font-family:'DM Mono',monospace; font-size:10px;
+  letter-spacing:.22em; text-transform:uppercase;
+  color:var(--red-bright); margin-bottom:16px;
+  display:flex; align-items:center; gap:14px;
+}
+.sec-label::before { content:''; width:20px; height:1px; background:var(--red-bright); }
+.sec-h2 {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(44px,6vw,88px);
+  line-height:.92; letter-spacing:.02em;
+  text-transform:uppercase; color:var(--white);
+}
+.sec-h2 .red { color:var(--red-bright); }
+
+/* ─── ABOUT ──────────────────────────────────── */
+.about { background:var(--black); position:relative; overflow:hidden; }
+.about-grid { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+.about-left {}
+.about-sub {
+  font-size:22px; line-height:1.55; color:rgba(240,237,232,.7);
+  margin-top:32px; max-width:520px;
+}
+.about-sub strong { color:var(--white); font-weight:500; }
+.about-right { position:relative; }
+.about-card {
+  background:var(--dark); border:1px solid var(--border);
+  padding:36px; position:relative; overflow:hidden;
+}
+.about-card::before {
+  content:'{'; position:absolute; right:20px; top:16px;
+  font-family:'DM Mono',monospace; font-size:80px;
+  color:rgba(155,21,21,.12); line-height:1; pointer-events:none;
+}
+.ac-quote {
+  font-family:'Dancing Script',cursive; font-size:22px;
+  color:var(--red-bright); margin-bottom:16px; display:block;
+}
+.ac-text { font-size:15px; line-height:1.75; color:rgba(240,237,232,.6); }
+.ac-sig { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); margin-top:24px; letter-spacing:.1em; }
+.about-code {
+  position:absolute; left:-40px; bottom:0;
+  font-family:'DM Mono',monospace; font-size:11px;
+  color:rgba(155,21,21,.15); line-height:1.8;
+  white-space:pre; pointer-events:none;
+}
+
+/* ─── STATS ──────────────────────────────────── */
+.stats { background:var(--gray); position:relative; padding:0; }
+.stats-inner { padding:0; }
+.stats-header { padding:80px 52px 48px; border-bottom:1px solid rgba(13,13,13,.15); }
+.stats-header p {
+  font-size:clamp(20px,2.5vw,32px);
+  line-height:1.4; color:var(--black);
+  max-width:600px;
+}
+.stats-header p em { font-style:italic; color:var(--red); }
+.stats-grid { }
+.stat-row {
+  display:grid; grid-template-columns:1fr 1fr;
+  border-bottom:1px solid rgba(13,13,13,.12);
+}
+.stat-row:last-child { border-bottom:none; }
+.stat-item {
+  padding:48px 52px;
+  border-right:1px solid rgba(13,13,13,.12);
+  position:relative; overflow:hidden;
+}
+.stat-item:nth-child(2n) { border-right:none; }
+.stat-num {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(72px,10vw,140px);
+  line-height:.85; color:var(--red);
+  display:block; margin-bottom:8px;
+  transition:transform .3s ease;
+}
+.stat-item:hover .stat-num { transform:translateX(8px); }
+.stat-lbl {
+  font-family:'DM Mono',monospace; font-size:11px;
+  letter-spacing:.16em; text-transform:uppercase;
+  color:rgba(13,13,13,.55);
+}
+.stat-divider { position:absolute; bottom:0; left:52px; right:52px; height:1px; background:rgba(155,21,21,.2); }
+
+/* ─── SERVICES ───────────────────────────────── */
+.services { background:var(--black); }
+.services-intro {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:60px; margin-bottom:72px; align-items:end;
+}
+.services-desc { font-size:15px; line-height:1.75; color:var(--muted); max-width:440px; }
+.svc-list { border-top:1px solid var(--border); }
+.svc-item {
+  display:grid; grid-template-columns:120px 1fr auto;
+  align-items:start;
+  padding:36px 0; border-bottom:1px solid var(--border);
+  gap:32px; cursor:pointer;
+  transition:padding-left .3s ease;
+  position:relative; overflow:hidden;
+}
+.svc-item::before {
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:2px; background:var(--red-bright);
+  transform:scaleY(0); transform-origin:bottom;
+  transition:transform .3s ease;
+}
+.svc-item:hover::before { transform:scaleY(1); }
+.svc-item:hover { padding-left:16px; }
+.svc-num {
+  font-family:'Bebas Neue',sans-serif; font-size:28px;
+  color:var(--red-bright); letter-spacing:.06em;
+}
+.svc-content {}
+.svc-name {
+  font-family:'Bebas Neue',sans-serif; font-size:clamp(24px,3vw,40px);
+  letter-spacing:.04em; color:var(--white); margin-bottom:10px;
+}
+.svc-tags { display:flex; gap:8px; flex-wrap:wrap; }
+.svc-tag {
+  font-family:'DM Mono',monospace; font-size:10px;
+  letter-spacing:.1em; text-transform:uppercase;
+  border:1px solid var(--border); color:var(--muted);
+  padding:3px 10px;
+}
+.svc-arrow {
+  font-size:20px; color:var(--muted);
+  transition:transform .3s, color .3s;
+  align-self:center;
+}
+.svc-item:hover .svc-arrow { transform:translateX(6px); color:var(--red-bright); }
+
+/* ─── VIDEO ──────────────────────────────────── */
+.video-section { background:var(--dark); padding:100px 52px; }
+.video-grid { display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-top:60px; }
+.vid-card {
+  position:relative; overflow:hidden; cursor:pointer;
+  background:var(--black);
+}
+.vid-card-tall { grid-row:span 2; }
+.vid-inner {
+  aspect-ratio:4/3;
+  display:flex; align-items:center; justify-content:center;
+  position:relative;
+}
+.vid-card-tall .vid-inner { aspect-ratio:auto; height:100%; min-height:500px; }
+.vid-bg {
+  position:absolute; inset:0;
+  transition:transform .6s ease;
+}
+.vid-card:hover .vid-bg { transform:scale(1.05); }
+.vbg1 { background:linear-gradient(135deg,#1a0505,#0d0d0d); }
+.vbg2 { background:linear-gradient(135deg,#0d0d0d,#1a0808); }
+.vbg3 { background:linear-gradient(135deg,#050505,#1a1010); }
+.vid-lines {
+  position:absolute; inset:0;
+  background-image:linear-gradient(rgba(155,21,21,.05) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(155,21,21,.05) 1px,transparent 1px);
+  background-size:48px 48px;
+}
+.vid-play {
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%) scale(.8);
+  width:68px; height:68px; border-radius:50%;
+  background:var(--red-bright);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; transition:all .3s;
+  z-index:3;
+}
+.vid-card:hover .vid-play { opacity:1; transform:translate(-50%,-50%) scale(1); }
+.vid-play svg { fill:white; width:22px; margin-left:4px; }
+.vid-info {
+  position:absolute; bottom:0; left:0; right:0;
+  padding:24px;
+  background:linear-gradient(to top,rgba(0,0,0,.95),transparent);
+  z-index:2;
+}
+.vid-cat {
+  font-family:'DM Mono',monospace; font-size:10px;
+  letter-spacing:.18em; text-transform:uppercase;
+  color:var(--red-bright); margin-bottom:6px;
+}
+.vid-title {
+  font-family:'Bebas Neue',sans-serif; font-size:20px;
+  letter-spacing:.04em; color:var(--white); line-height:1.2;
+}
+.vid-dur { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); margin-top:4px; }
+.vid-side { display:grid; grid-template-rows:1fr 1fr; gap:16px; }
+
+/* VIDEO MODAL */
+.vmodal { display:none; position:fixed; inset:0; z-index:700; background:rgba(0,0,0,.97); align-items:center; justify-content:center; padding:20px; }
+.vmodal.open { display:flex; }
+.vm-box { background:var(--dark); border:1px solid var(--border); width:100%; max-width:820px; }
+.vm-screen { aspect-ratio:16/9; background:var(--black); display:flex; align-items:center; justify-content:center; position:relative; }
+.vm-screen-inner { position:absolute; inset:0; background:linear-gradient(135deg,#1a0505,#050505); display:flex; align-items:center; justify-content:center; }
+.vm-play-icon { width:80px; height:80px; border-radius:50%; background:var(--red-bright); display:flex; align-items:center; justify-content:center; }
+.vm-play-icon svg { fill:white; width:28px; margin-left:5px; }
+.vm-footer { padding:18px 24px; display:flex; justify-content:space-between; align-items:center; }
+.vm-title { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:.06em; color:var(--white); }
+.vm-close { width:36px; height:36px; background:var(--red-bright); border:none; color:white; font-size:18px; cursor:pointer; }
+
+/* ─── CASES ──────────────────────────────────── */
+.cases { background:var(--black); }
+.cases-list { margin-top:64px; }
+.case-item {
+  display:grid; grid-template-columns:80px 1fr 340px;
+  gap:48px; align-items:center;
+  border-top:1px solid var(--border);
+  padding:48px 0; cursor:pointer;
+  transition:padding-left .3s;
+}
+.case-item:hover { padding-left:12px; }
+.case-num { font-family:'Bebas Neue',sans-serif; font-size:32px; color:var(--red-bright); }
+.case-info {}
+.case-cat {
+  font-family:'DM Mono',monospace; font-size:10px;
+  letter-spacing:.18em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:10px;
+}
+.case-name { font-family:'Bebas Neue',sans-serif; font-size:clamp(32px,4vw,56px); letter-spacing:.03em; color:var(--white); margin-bottom:14px; }
+.case-desc { font-size:14px; line-height:1.7; color:var(--muted); max-width:500px; }
+.case-results { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.cr-item { background:var(--dark); border:1px solid var(--border); padding:16px 20px; }
+.cr-num { font-family:'Bebas Neue',sans-serif; font-size:32px; color:var(--red-bright); }
+.cr-lbl { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-top:4px; }
+.case-img {
+  position:relative; overflow:hidden;
+  width:100%; aspect-ratio:16/10;
+  background:var(--dark);
+}
+.case-img-bg { position:absolute; inset:0; transition:transform .5s ease; }
+.case-item:hover .case-img-bg { transform:scale(1.04); }
+.ci1 { background:linear-gradient(135deg,#1a0505,#0d0808); }
+.ci2 { background:linear-gradient(135deg,#0d0505,#1a0a0a); }
+.ci3 { background:linear-gradient(135deg,#050505,#1a0808); }
+.case-img-overlay { position:absolute; inset:0; background:linear-gradient(135deg,rgba(155,21,21,.2),transparent); }
+.case-img-num { position:absolute; bottom:16px; left:16px; font-family:'Bebas Neue',sans-serif; font-size:48px; color:rgba(255,255,255,.08); line-height:1; }
+
+/* ─── CTA ─────────────────────────────────────── */
+.cta-section {
+  background:var(--red-bright); padding:120px 52px;
+  position:relative; overflow:hidden;
+  text-align:center;
+}
+.cta-bg-text {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(80px,18vw,240px);
+  color:rgba(0,0,0,.12); letter-spacing:.04em;
+  pointer-events:none; white-space:nowrap;
+  overflow:hidden;
+}
+.cta-label { font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:rgba(255,255,255,.6); margin-bottom:16px; display:block; }
+.cta-h2 { font-family:'Bebas Neue',sans-serif; font-size:clamp(48px,8vw,96px); letter-spacing:.02em; color:var(--white); line-height:.92; margin-bottom:40px; text-transform:uppercase; }
+.cta-actions { display:flex; justify-content:center; gap:16px; flex-wrap:wrap; position:relative; z-index:2; }
+.btn-white { background:var(--white); color:var(--black); padding:14px 36px; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.15em; text-transform:uppercase; text-decoration:none; transition:all .2s; }
+.btn-white:hover { background:var(--black); color:var(--white); }
+.btn-outline-white { background:transparent; color:var(--white); border:1px solid rgba(255,255,255,.4); padding:14px 36px; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.15em; text-transform:uppercase; text-decoration:none; transition:all .2s; }
+.btn-outline-white:hover { background:rgba(255,255,255,.1); border-color:white; }
+
+/* ─── FOOTER ──────────────────────────────────── */
+footer { background:var(--black); border-top:1px solid var(--border); padding:72px 52px 0; }
+.footer-top { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:52px; padding-bottom:60px; border-bottom:1px solid var(--border); }
+.footer-brand {}
+.footer-logo { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:.15em; color:var(--white); display:flex; align-items:center; gap:8px; margin-bottom:16px; text-decoration:none; }
+.footer-logo .plus { color:var(--red-bright); }
+.footer-tagline { font-family:'Dancing Script',cursive; font-size:18px; color:var(--red-bright); display:block; margin-bottom:12px; }
+.footer-desc { font-size:13px; line-height:1.7; color:var(--muted); max-width:260px; }
+.footer-col h4 { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:18px; }
+.footer-col a { display:block; font-size:13px; color:rgba(240,237,232,.45); text-decoration:none; margin-bottom:9px; transition:color .2s; }
+.footer-col a:hover { color:var(--red-bright); }
+.footer-bottom { padding:22px 0; display:flex; justify-content:space-between; align-items:center; }
+.footer-copy { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:.08em; }
+.footer-copy strong { color:var(--red-bright); }
+
+/* ─── MOBILE MENU ────────────────────────────── */
+.ham { display:none; flex-direction:column; gap:5px; cursor:pointer; background:none; border:none; padding:4px; }
+.ham span { display:block; width:26px; height:1.5px; background:var(--white); transition:all .3s; }
+.mob-menu { display:none; position:fixed; inset:0; z-index:450; background:var(--black); flex-direction:column; align-items:center; justify-content:center; gap:0; }
+.mob-menu.open { display:flex; }
+.mob-menu a { font-family:'Bebas Neue',sans-serif; font-size:clamp(40px,10vw,64px); letter-spacing:.06em; color:var(--white); text-decoration:none; padding:16px 40px; border-bottom:1px solid var(--border); width:100%; text-align:center; transition:color .2s; }
+.mob-menu a:hover { color:var(--red-bright); }
+.mob-menu a.cta { background:var(--red-bright); border-color:transparent; margin-top:20px; }
+
+/* ─── REVEAL ANIMS ───────────────────────────── */
+.reveal { opacity:0; transform:translateY(40px); transition:opacity .8s ease,transform .8s ease; }
+.reveal.vis { opacity:1; transform:translateY(0); }
+.reveal-l { opacity:0; transform:translateX(-40px); transition:opacity .8s ease,transform .8s ease; }
+.reveal-l.vis { opacity:1; transform:translateX(0); }
+@keyframes fadeIn { to{opacity:1} }
+
+/* ─── RESPONSIVE ─────────────────────────────── */
+@media(max-width:960px){
+  nav { padding:18px 24px; }
+  .nav-links,.nav-cta { display:none; }
+  .ham { display:flex; }
+  .hero-content { padding:0 24px; }
+  .hero-plus { right:24px; }
+  .about-grid,.services-intro { grid-template-columns:1fr; }
+  .sec { padding:80px 24px; }
+  .stat-row { grid-template-columns:1fr; }
+  .stat-item:nth-child(2n) { border-right:none; border-top:1px solid rgba(13,13,13,.12); }
+  .video-grid { grid-template-columns:1fr; }
+  .vid-card-tall { grid-row:auto; }
+  .vid-card-tall .vid-inner { min-height:280px; }
+  .vid-side { grid-template-rows:auto; }
+  .case-item { grid-template-columns:60px 1fr; gap:24px; }
+  .case-results { display:none; }
+  footer { padding:48px 24px 0; }
+  .footer-top { grid-template-columns:1fr 1fr; }
+  .footer-bottom { flex-direction:column; gap:8px; padding:16px 0; }
+  .cta-section { padding:80px 24px; }
+  .stats-header { padding:60px 24px 40px; }
+  .stat-item { padding:40px 24px; }
+}
+@media(max-width:560px){
+  .hero-h1 { font-size:clamp(52px,14vw,80px); }
+  .hero-bottom { flex-direction:column; align-items:flex-start; gap:24px; }
+  .hero-plus { display:none; }
+  .case-item { grid-template-columns:1fr; }
+  .case-num { display:none; }
+  .footer-top { grid-template-columns:1fr; }
+  .video-grid { gap:8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cur" id="cur"></div>
+<div class="cur-ring" id="curRing"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-word">
+    <span>ALICERCE</span>
+  </div>
+  <div class="loader-word" style="margin-top:-16px">
+    <span style="animation-delay:.1s">CREATIVE</span>&nbsp;<span style="color:var(--red-bright);animation-delay:.2s">MKT</span>
+  </div>
+  <div class="loader-bar"></div>
+</div>
+
+<!-- VIDEO MODAL -->
+<div class="vmodal" id="vmodal">
+  <div class="vm-box">
+    <div class="vm-screen">
+      <div class="vm-screen-inner">
+        <div class="vm-play-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+    </div>
+    <div class="vm-footer">
+      <span class="vm-title" id="vmTitle">Showreel 2024</span>
+      <button class="vm-close" id="vmClose">✕</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <span class="plus">+</span> ALICERCE
+  </a>
+  <div class="nav-links">
+    <a href="#sobre">/ Sobre</a>
+    <a href="#servicos">/ Serviços</a>
+    <a href="#videos">/ Vídeos</a>
+    <a href="#cases">/ Cases</a>
+  </div>
+  <a href="#contato" class="nav-cta">Deixar um pedido →</a>
+  <button class="ham" id="ham" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mob-menu" id="mobMenu">
+  <a href="#sobre" class="mob-link">Sobre</a>
+  <a href="#servicos" class="mob-link">Serviços</a>
+  <a href="#videos" class="mob-link">Vídeos</a>
+  <a href="#cases" class="mob-link">Cases</a>
+  <a href="#contato" class="cta mob-link">Falar conosco</a>
+</div>
+
+<!-- ═══ HERO ══════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-spotlight"></div>
+
+  <!-- Code background -->
+  <div class="code-bg">
+    <div class="code-col">int main() {
+  printf("ALICERCE – uma agência
+   de marketing que transforma
+   negócios em marcas fortes
+   no ambiente digital.\n");
+  return 0;
+}</div>
+    <div class="code-col" style="text-align:right">// CTRL + M
+// activateStrongBrand();
+// controlMarketing();
+// dominateIndustry();</div>
+  </div>
+
+  <!-- Plus grid -->
+  <div class="hero-plus">
+    <div class="hp-cell"></div>
+    <div class="hp-cell"></div>
+    <div class="hp-cell"></div>
+    <div class="hp-cell"></div>
+  </div>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">Agência de Marketing Digital</p>
+    <h1 class="hero-h1">
+      <span class="line">CONTROLE</span>
+      <span class="line r">SEU</span>
+      <span class="line">MARKETING</span>
+    </h1>
+    <div class="hero-bottom">
+      <p class="hero-desc">O marketing deve funcionar como um mecanismo preciso — de forma previsível, eficiente e sem custos desnecessários. Nós fazemos isso acontecer.</p>
+      <div class="hero-cta-wrap">
+        <a href="#contato" class="btn-red">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Deixar um pedido
+        </a>
+        <span class="hero-scroll">Role para baixo</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="ticker-item">Alicerce Creative</span>
+    <span class="ticker-item">Marketing Digital</span>
+    <span class="ticker-item">Branding</span>
+    <span class="ticker-item">Produção de Vídeo</span>
+    <span class="ticker-item">Performance</span>
+    <span class="ticker-item">Social Media</span>
+    <span class="ticker-item">Estratégia</span>
+    <span class="ticker-item">Resultados</span>
+    <span class="ticker-item">Alicerce Creative</span>
+    <span class="ticker-item">Marketing Digital</span>
+    <span class="ticker-item">Branding</span>
+    <span class="ticker-item">Produção de Vídeo</span>
+    <span class="ticker-item">Performance</span>
+    <span class="ticker-item">Social Media</span>
+    <span class="ticker-item">Estratégia</span>
+    <span class="ticker-item">Resultados</span>
+  </div>
+</div>
+
+<!-- ═══ ABOUT ══════════════════════════════════ -->
+<section class="sec about" id="sobre">
+  <div class="about-grid">
+    <div class="about-left">
+      <p class="sec-label reveal">Sobre a agência</p>
+      <h2 class="sec-h2 reveal">DOMINE<br>SUA <span class="red">INDÚSTRIA</span></h2>
+      <p class="about-sub reveal">
+        A Alicerce é uma agência digital que transforma negócios em marcas <strong>reconhecíveis e sólidas</strong> no ambiente digital. Nossa equipe constrói marketing sistemático que não deixa espaço para o caos.
+        <br><br>
+        Não oferecemos apenas soluções — criamos um <strong>plano transformador</strong> que leva a sua marca ao próximo nível.
+      </p>
+    </div>
+    <div class="about-right reveal">
+      <div class="about-card">
+        <em class="ac-quote">a alma do seu negócio</em>
+        <p class="ac-text">"Sabemos exatamente quais botões apertar para fazer sua marca trabalhar em seu pleno potencial. O marketing deve ser uma ciência, não um acaso — e é exatamente isso que entregamos."</p>
+        <p class="ac-sig">— Alicerce Creative Marketing, 2024</p>
+      </div>
+      <div class="about-code">int main() {
+  activateBrand();
+  controlMarketing();
+  dominateIndustry();
+  return success;
+}</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ STATS ══════════════════════════════════ -->
+<div class="stats" id="resultados">
+  <div class="stats-inner">
+    <div class="stats-header reveal">
+      <p class="sec-label" style="color:var(--red)">Eficiência em números</p>
+      <p>E não apenas falamos de resultados<br><em>— nós os entregamos.</em></p>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-row">
+        <div class="stat-item reveal">
+          <span class="stat-num" data-target="188">0</span>
+          <span class="stat-lbl">% ROI médio dos nossos clientes</span>
+          <div class="stat-divider"></div>
+        </div>
+        <div class="stat-item reveal">
+          <span class="stat-num" data-target="700" data-suffix="+">0</span>
+          <span class="stat-lbl">Cases implementados</span>
+          <div class="stat-divider"></div>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-item reveal">
+          <span class="stat-num" data-target="7" data-suffix="+">0</span>
+          <span class="stat-lbl">Anos no mercado</span>
+        </div>
+        <div class="stat-item reveal">
+          <span class="stat-num" data-target="92" data-suffix="%">0</span>
+          <span class="stat-lbl">Taxa de retenção de clientes</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SERVICES ════════════════════════════════ -->
+<section class="sec services" id="servicos">
+  <div class="services-intro">
+    <div>
+      <p class="sec-label reveal">/ Serviços</p>
+      <h2 class="sec-h2 reveal">UMA AMPLA GAMA<br>DE SERVIÇOS PARA<br>UM <span class="red">RESULTADO ARDENTE</span></h2>
+    </div>
+    <p class="services-desc reveal">"Sabemos quais botões apertar para fazer sua marca trabalhar em seu pleno potencial." Cada serviço é construído como um sistema — não como uma tentativa.</p>
+  </div>
+  <div class="svc-list reveal">
+    <div class="svc-item">
+      <span class="svc-num">/01</span>
+      <div class="svc-content">
+        <p class="svc-name">Estratégia de Marketing</p>
+        <div class="svc-tags">
+          <span class="svc-tag">Estratégia de marca</span>
+          <span class="svc-tag">Estratégia de crescimento</span>
+          <span class="svc-tag">Workshop de posicionamento</span>
+          <span class="svc-tag">Plano de comunicação</span>
+        </div>
+      </div>
+      <span class="svc-arrow">→</span>
+    </div>
+    <div class="svc-item">
+      <span class="svc-num">/02</span>
+      <div class="svc-content">
+        <p class="svc-name">Design Digital</p>
+        <div class="svc-tags">
+          <span class="svc-tag">Identidade visual</span>
+          <span class="svc-tag">Criação de conteúdo</span>
+          <span class="svc-tag">Estratégia de conteúdo</span>
+          <span class="svc-tag">Brand storytelling</span>
+        </div>
+      </div>
+      <span class="svc-arrow">→</span>
+    </div>
+    <div class="svc-item">
+      <span class="svc-num">/03</span>
+      <div class="svc-content">
+        <p class="svc-name">SEO & Performance</p>
+        <div class="svc-tags">
+          <span class="svc-tag">SEO & Otimização</span>
+          <span class="svc-tag">Campanhas pagas</span>
+          <span class="svc-tag">Publicidade contextual</span>
+          <span class="svc-tag">SEO local</span>
+        </div>
+      </div>
+      <span class="svc-arrow">→</span>
+    </div>
+    <div class="svc-item">
+      <span class="svc-num">/04</span>
+      <div class="svc-content">
+        <p class="svc-name">Produção de Vídeo</p>
+        <div class="svc-tags">
+          <span class="svc-tag">Comerciais</span>
+          <span class="svc-tag">Reels & TikTok</span>
+          <span class="svc-tag">Motion Design</span>
+          <span class="svc-tag">Vídeo institucional</span>
+        </div>
+      </div>
+      <span class="svc-arrow">→</span>
+    </div>
+    <div class="svc-item">
+      <span class="svc-num">/05</span>
+      <div class="svc-content">
+        <p class="svc-name">Social Media</p>
+        <div class="svc-tags">
+          <span class="svc-tag">Gestão de redes</span>
+          <span class="svc-tag">Calendário editorial</span>
+          <span class="svc-tag">Análise de dados</span>
+          <span class="svc-tag">Engajamento</span>
+        </div>
+      </div>
+      <span class="svc-arrow">→</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ VIDEOS ════════════════════════════════ -->
+<section class="video-section" id="videos">
+  <p class="sec-label reveal">/ Portfólio em Vídeo</p>
+  <h2 class="sec-h2 reveal" style="margin-bottom:0">NOSSO <span class="red">TRABALHO</span><br>FALA POR SI</h2>
+  <div class="video-grid reveal">
+    <div class="vid-card vid-card-tall" data-title="Showreel Alicerce — 2024" onclick="openVid(this)">
+      <div class="vid-inner">
+        <div class="vid-bg vbg1"><div class="vid-lines"></div></div>
+        <div class="vid-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+        <div class="vid-info">
+          <p class="vid-cat">Showreel</p>
+          <p class="vid-title">ALICERCE REEL 2024</p>
+          <p class="vid-dur">2:47</p>
+        </div>
+      </div>
+    </div>
+    <div class="vid-side">
+      <div class="vid-card" data-title="Campanha de Marca — Cliente A" onclick="openVid(this)">
+        <div class="vid-inner">
+          <div class="vid-bg vbg2"><div class="vid-lines"></div></div>
+          <div class="vid-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="vid-info">
+            <p class="vid-cat">Campanha</p>
+            <p class="vid-title">BRAND FILM</p>
+            <p class="vid-dur">1:20</p>
+          </div>
+        </div>
+      </div>
+      <div class="vid-card" data-title="Motion Design — Identidade Visual" onclick="openVid(this)">
+        <div class="vid-inner">
+          <div class="vid-bg vbg3"><div class="vid-lines"></div></div>
+          <div class="vid-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="vid-info">
+            <p class="vid-cat">Motion Design</p>
+            <p class="vid-title">MOTION IDENTITY</p>
+            <p class="vid-dur">0:45</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CASES ════════════════════════════════ -->
+<section class="sec cases" id="cases">
+  <p class="sec-label reveal">/ Cases</p>
+  <h2 class="sec-h2 reveal">CRIAMOS HISTÓRIAS<br>DE <span class="red">SUCESSO</span><br>PARA NOSSOS CLIENTES</h2>
+
+  <div class="cases-list">
+    <div class="case-item reveal">
+      <span class="case-num">/01</span>
+      <div class="case-info">
+        <p class="case-cat">[ Estratégia de Marca ] · 2024</p>
+        <p class="case-name">Dark Bloom</p>
+        <p class="case-desc">Desenvolvemos uma estratégia de marca inovadora que combinou estética criativa com elementos de vanguarda, maximizando o alcance e as colaborações com influenciadores.</p>
+        <div class="case-results" style="margin-top:20px">
+          <div class="cr-item">
+            <p class="cr-num">40%</p>
+            <p class="cr-lbl">Aumento de vendas em 2 semanas</p>
+          </div>
+          <div class="cr-item">
+            <p class="cr-num">80%</p>
+            <p class="cr-lbl">Engajamento no Instagram</p>
+          </div>
+        </div>
+      </div>
+      <div class="case-img">
+        <div class="case-img-bg ci1"></div>
+        <div class="case-img-overlay"></div>
+        <div class="case-img-num">01</div>
+      </div>
+    </div>
+
+    <div class="case-item reveal">
+      <span class="case-num">/02</span>
+      <div class="case-info">
+        <p class="case-cat">[ Estratégia de Conteúdo ] · 2024</p>
+        <p class="case-name">Velox Fintech</p>
+        <p class="case-desc">Criamos uma estratégia de conteúdo repleta de intensidade e elegância. Visuais cinematográficos e formatos inovadores amplificaram a percepção da marca exponencialmente.</p>
+        <div class="case-results" style="margin-top:20px">
+          <div class="cr-item">
+            <p class="cr-num">60%</p>
+            <p class="cr-lbl">Engajamento nas redes</p>
+          </div>
+          <div class="cr-item">
+            <p class="cr-num">3.2×</p>
+            <p class="cr-lbl">Retorno sobre investimento</p>
+          </div>
+        </div>
+      </div>
+      <div class="case-img">
+        <div class="case-img-bg ci2"></div>
+        <div class="case-img-overlay"></div>
+        <div class="case-img-num">02</div>
+      </div>
+    </div>
+
+    <div class="case-item reveal">
+      <span class="case-num">/03</span>
+      <div class="case-info">
+        <p class="case-cat">[ Estratégia de Crescimento ] · 2024</p>
+        <p class="case-name">Nexum Tech</p>
+        <p class="case-desc">Nossa estratégia de crescimento centrada em narrativas visuais tácteis e campanhas com storytelling digital gerou um crescimento orgânico consistente e mensurável.</p>
+        <div class="case-results" style="margin-top:20px">
+          <div class="cr-item">
+            <p class="cr-num">35%</p>
+            <p class="cr-lbl">Aumento de vendas</p>
+          </div>
+          <div class="cr-item">
+            <p class="cr-num">55%</p>
+            <p class="cr-lbl">Crescimento de seguidores</p>
+          </div>
+        </div>
+      </div>
+      <div class="case-img">
+        <div class="case-img-bg ci3"></div>
+        <div class="case-img-overlay"></div>
+        <div class="case-img-num">03</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA ════════════════════════════════════ -->
+<section class="cta-section" id="contato">
+  <div class="cta-bg-text">ALICERCE</div>
+  <p class="cta-label">Pronto para dominar?</p>
+  <h2 class="cta-h2">LEVE SUA MARCA<br>AO PRÓXIMO NÍVEL</h2>
+  <p style="font-size:15px;color:rgba(255,255,255,.65);max-width:480px;margin:0 auto 40px;line-height:1.7;position:relative;z-index:2">"A combinação que ativa o seu marketing." — Sem burocracia, direto ao resultado.</p>
+  <div class="cta-actions">
+    <a href="mailto:ola@alicerce.studio" class="btn-white">Deixar um pedido</a>
+    <a href="#cases" class="btn-outline-white">Ver portfólio →</a>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ════════════════════════════════ -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="#" class="footer-logo"><span class="plus">+</span> ALICERCE</a>
+      <em class="footer-tagline">a alma do seu negócio</em>
+      <p class="footer-desc">Agência de marketing digital que transforma negócios em marcas reconhecíveis e sólidas no ambiente digital.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Serviços</h4>
+      <a href="#">Estratégia</a>
+      <a href="#">Design Digital</a>
+      <a href="#">SEO & Ads</a>
+      <a href="#">Produção de Vídeo</a>
+      <a href="#">Social Media</a>
+    </div>
+    <div class="footer-col">
+      <h4>Empresa</h4>
+      <a href="#">Sobre nós</a>
+      <a href="#">Cases</a>
+      <a href="#">Blog</a>
+      <a href="#">Carreiras</a>
+    </div>
+    <div class="footer-col">
+      <h4>Contato</h4>
+      <a href="#">ola@alicerce.studio</a>
+      <a href="#">Instagram</a>
+      <a href="#">LinkedIn</a>
+      <a href="#">YouTube</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2024 <strong>Alicerce Creative Marketing</strong> — Todos os direitos reservados.</p>
+    <p class="footer-copy">Feito com <strong>alma</strong> ✦</p>
+  </div>
+</footer>
+
+<script>
+/* ── LOADER ───────────────── */
+window.addEventListener('load',()=>{
+  setTimeout(()=>{document.getElementById('loader').classList.add('gone');},1600);
+});
+
+/* ── CURSOR ───────────────── */
+const cur=document.getElementById('cur'),ring=document.getElementById('curRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function anim(){
+  cur.style.left=mx-4+'px';cur.style.top=my-4+'px';
+  rx+=(mx-rx)*.13;ry+=(my-ry)*.13;
+  ring.style.left=rx-18+'px';ring.style.top=ry-18+'px';
+  requestAnimationFrame(anim);
+})();
+document.querySelectorAll('a,button,.svc-item,.case-item,.vid-card,.stat-item').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.transform='scale(2.5)';ring.classList.add('hov');});
+  el.addEventListener('mouseleave',()=>{cur.style.transform='scale(1)';ring.classList.remove('hov');});
+});
+
+/* ── HAMBURGER ────────────── */
+const ham=document.getElementById('ham'),mob=document.getElementById('mobMenu');
+ham.addEventListener('click',()=>mob.classList.toggle('open'));
+document.querySelectorAll('.mob-link').forEach(a=>a.addEventListener('click',()=>mob.classList.remove('open')));
+
+/* ── VIDEO MODAL ──────────── */
+function openVid(el){
+  document.getElementById('vmTitle').textContent=el.getAttribute('data-title');
+  document.getElementById('vmodal').classList.add('open');
+}
+document.getElementById('vmClose').onclick=()=>document.getElementById('vmodal').classList.remove('open');
+document.getElementById('vmodal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+
+/* ── SCROLL REVEAL ────────── */
+const ro=new IntersectionObserver((entries)=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){setTimeout(()=>e.target.classList.add('vis'),i*100);ro.unobserve(e.target);}
+  });
+},{threshold:.1});
+document.querySelectorAll('.reveal,.reveal-l').forEach(el=>ro.observe(el));
+
+/* ── COUNTER ANIMATION ────── */
+function animCount(el){
+  const target=parseInt(el.getAttribute('data-target'));
+  const suffix=el.getAttribute('data-suffix')||'';
+  let start=0; const dur=1800; const startTime=performance.now();
+  function tick(now){
+    const p=Math.min((now-startTime)/dur,1);
+    const ease=1-Math.pow(1-p,4);
+    start=Math.round(ease*target);
+    el.textContent=start+suffix;
+    if(p<1)requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+const co=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){animCount(e.target);co.unobserve(e.target);}});
+},{threshold:.3});
+document.querySelectorAll('.stat-num[data-target]').forEach(el=>co.observe(el));
+
+/* ── PARALLAX HERO ────────── */
+window.addEventListener('scroll',()=>{
+  const s=window.scrollY;
+  const h=document.querySelector('.hero-h1');
+  if(h) h.style.transform=`translateY(${s*.12}px)`;
+  const bg=document.querySelector('.hero-bg');
+  if(bg) bg.style.transform=`translateY(${s*.06}px)`;
+});
+</script>
+</body>
+</html>
